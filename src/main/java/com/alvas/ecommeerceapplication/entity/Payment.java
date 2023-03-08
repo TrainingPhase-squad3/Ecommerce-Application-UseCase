@@ -33,7 +33,7 @@ public class Payment {
 	@CreationTimestamp
 	private LocalDate paymentDate;
 	
-	private double totalPrice;
+	
 
 	
 
