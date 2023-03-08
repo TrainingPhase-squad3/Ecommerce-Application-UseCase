@@ -67,4 +67,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	}
 
+	@ExceptionHandler(ProductNotFoundException.class)
+	public ResponseEntity<String> productNotFoundException(ProductNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+
+	}
+	
+	
+
 }
