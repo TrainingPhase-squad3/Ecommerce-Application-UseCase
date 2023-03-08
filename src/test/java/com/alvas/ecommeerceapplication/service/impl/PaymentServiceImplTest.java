@@ -7,5 +7,3 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class PaymentServiceImplTest {
 
 }
-
-	

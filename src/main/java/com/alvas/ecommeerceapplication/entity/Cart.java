@@ -28,8 +28,4 @@ public class Cart {
 	private User user;
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<CartProduct> cartProducts;
-	
-	
-	
-
 }

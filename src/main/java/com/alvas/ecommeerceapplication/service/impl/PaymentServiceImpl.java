@@ -7,15 +7,4 @@ import com.alvas.ecommeerceapplication.service.PaymentService;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-	
-	
-
-	
-	
-	
-
-	
-	
 }
-
-

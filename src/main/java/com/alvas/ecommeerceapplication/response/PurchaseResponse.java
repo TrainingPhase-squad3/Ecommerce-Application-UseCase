@@ -10,15 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PurchaseResponse {
-	
-	
+
 	private long cartId;
-	    private double totalPrice;
-	    private int totalQuantity;
-	    private LocalDate paymentDate;
-	
+	private double totalPrice;
+	private int totalQuantity;
+	private LocalDate paymentDate;
 
-	
-	}
-
-
+}
