@@ -1,21 +1,14 @@
 package com.alvas.ecommeerceapplication.dto;
 
-import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class PaymentDto {
-
-
-	@NotBlank
-	private long cartId;
-	@NotBlank
-	private long walletId;
-
-
+@NoArgsConstructor
+public class CartDto {
+	List<CartProductDto> productDtos;
 }
