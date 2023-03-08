@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.alvas.ecommeerceapplication.response.ApiResponse;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -27,6 +29,51 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		});
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ApiResponse> handleUserNotFoundException(UserNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
+
+	}
+	@ExceptionHandler(CartNotFoundException.class)
+	public ResponseEntity<ApiResponse> handleCartNotFoundException(CartNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
+
+	}
+	
+	@ExceptionHandler(InsufficientFundsException.class)
+	public ResponseEntity<ApiResponse> handleResourceNotFoundException(InsufficientFundsException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.PAYMENT_REQUIRED));
+
+	}
+	@ExceptionHandler(WalletExpiredException.class)
+	public ResponseEntity<ApiResponse> handleResourceWalletExpiredException(WalletExpiredException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.GONE));
+
+	}
+	@ExceptionHandler(WalletNotFoundException.class)
+	public ResponseEntity<ApiResponse> handleWalletNotFoundException(WalletNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
+
+	}
+	@ExceptionHandler(RequestedQuantityNotAvailableException.class)
+	public ResponseEntity<ApiResponse> handleRequestedQuantityNotAvailableException(RequestedQuantityNotAvailableException exception) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.BAD_REQUEST));
+
+	}
+
+	@ExceptionHandler(ProductNotFoundException.class)
+	public ResponseEntity<String> productNotFoundException(ProductNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+
+	}
+	
+	
 
 	@ExceptionHandler(ProductNotFoundException.class)
 	public ResponseEntity<String> handleRequestedQuantityNotAvailableException(ProductNotFoundException exception) {

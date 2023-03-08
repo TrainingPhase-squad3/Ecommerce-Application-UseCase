@@ -32,4 +32,5 @@ public class Payment {
 	private Cart cart;
 	@CreationTimestamp
 	private LocalDate paymentDate;
+
 }
