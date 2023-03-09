@@ -6,8 +6,4 @@ import com.alvas.ecommeerceapplication.entity.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-
-
-
-	
 }
