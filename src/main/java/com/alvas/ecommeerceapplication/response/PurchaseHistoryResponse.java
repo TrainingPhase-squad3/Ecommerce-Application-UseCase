@@ -3,8 +3,6 @@ package com.alvas.ecommeerceapplication.response;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.alvas.ecommeerceapplication.entity.CartProduct;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +12,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PurchaseHistoryResponse {
 
+	
+	
+	private List<CartProductResponse> CartProduct;
+	private LocalDate paymentDate;
+	private Double totalPrice;
+	private long walletId;
+
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	
+
+
 	private List<CartProduct> CartProduct;
 	private LocalDate paymentDate;
 	private Double totalPrice;
+
 
 }

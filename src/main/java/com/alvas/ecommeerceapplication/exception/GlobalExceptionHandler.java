@@ -29,12 +29,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		});
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
+
+	
+	@ExceptionHandler(UserIdNotFoundException.class)
+	public ResponseEntity<ApiResponse> handleResourceNotFoundException(
+			UserIdNotFoundException exception) {
+
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ApiResponse> handleUserNotFoundException(UserNotFoundException exception) {
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
 
 	}
+
+
+	@ExceptionHandler(NoPurchaseHistoryFoundException.class)
+	public ResponseEntity<ApiResponse> handleResourceNotFoundException(
+			NoPurchaseHistoryFoundException exception) {
+
 	@ExceptionHandler(CartNotFoundException.class)
 	public ResponseEntity<ApiResponse> handleCartNotFoundException(CartNotFoundException exception) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -56,14 +69,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	@ExceptionHandler(WalletNotFoundException.class)
 	public ResponseEntity<ApiResponse> handleWalletNotFoundException(WalletNotFoundException exception) {
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
 
 	}
+
+
 	@ExceptionHandler(RequestedQuantityNotAvailableException.class)
 	public ResponseEntity<ApiResponse> handleRequestedQuantityNotAvailableException(RequestedQuantityNotAvailableException exception) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ApiResponse(exception.getMessage(), HttpStatus.BAD_REQUEST));
+
 
 	}
 
