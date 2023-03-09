@@ -1,6 +1,10 @@
 package com.alvas.ecommeerceapplication.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +46,20 @@ public class CartServiceImpl implements CartService {
 
 		Cart cart = new Cart();
 		cart.setUser(user);
-		List<CartProduct> cartProducts = cartDto.getProductDtos().stream().map(productDto -> {
-			CartProduct cartProduct = new CartProduct();
-			BeanUtils.copyProperties(productDto, cartProduct);
-			Product product = products.stream().filter(p -> p.getProductId() == productDto.getProductId()).findFirst()
-					.orElseThrow(() -> new ProductNotFoundException(
-							"Product with id:" + productDto.getProductId() + " not found"));
-			double productPrice = product.getPrice();
-			double productTotalPrice = productPrice * productDto.getQuantity();
-			cart.setTotalPrice(cart.getTotalPrice() + productTotalPrice);
-			return cartProduct;
-		}).toList();
+		Map<Long, Product> productMap = products.stream().collect(Collectors.toMap(Product::getProductId, Function.identity()));
+		List<CartProduct> cartProducts = cartDto.getProductDtos().stream()
+		        .map(productDto -> {
+		            CartProduct cartProduct = new CartProduct();
+		            BeanUtils.copyProperties(productDto, cartProduct);
+		            Product product = productMap.get(productDto.getProductId());
+		            if (Objects.isNull(product)) {
+		                throw new ProductNotFoundException("Product with id:" + productDto.getProductId() + " not found");
+		            }
+		            double productPrice = product.getPrice();
+		            double productTotalPrice = productPrice * productDto.getQuantity();
+		            cart.setTotalPrice(cart.getTotalPrice() + productTotalPrice);
+		            return cartProduct;
+		        }).toList();
 		cart.setCartProducts(cartProducts);
 		cart.setTotalQuantity(cartProducts.stream().mapToInt(CartProduct::getQuantity).sum());
 
@@ -63,3 +70,4 @@ public class CartServiceImpl implements CartService {
 	}
 
 }
+
