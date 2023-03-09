@@ -38,13 +38,14 @@ public class PaymentController {
 
 	
 	@GetMapping("/{userId}")
-	public ResponseEntity<List<PurchaseHistoryResponse>> getUserPurchasesForMonth(@PathVariable Long userId,
-			@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam int pageNumber,
+	public ResponseEntity<List<PurchaseHistoryResponse>> getUserPurchasesForMonth(@Valid @PathVariable Long userId,
+			@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam @Min(value = 0, message = "Page number must be greater than or equal to 0")int pageNumber,
 			@RequestParam int pageSize) {
 		List<PurchaseHistoryResponse> purchases = paymentService.getUserPurchasesForMonth(userId,
 		 		LocalDate.of(year, month, 1), pageNumber, pageSize);
 
 		return ResponseEntity.ok(purchases);
+	}
 
 
 	@PostMapping("/{user-id}/purchase")
