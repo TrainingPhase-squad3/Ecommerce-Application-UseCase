@@ -32,9 +32,7 @@ public class PurchaseHistoryResponse {
 	
 
 
-	private List<CartProduct> CartProduct;
-	private LocalDate paymentDate;
-	private Double totalPrice;
+	
 
 
 }
