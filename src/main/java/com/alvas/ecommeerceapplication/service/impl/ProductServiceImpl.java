@@ -26,10 +26,16 @@ public class ProductServiceImpl implements ProductService {
 	public Page<ProductDto> getProduct(String productName, int pageNumber, int pageSize) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
-		if (productPage.isEmpty()) {
+		
+		if (pageNumber >= productPage.getTotalPages()) {
+			logger.warn("product not available on this page");
+			return Page.empty();
+		} else if (productPage.isEmpty()) {
 			logger.warn("product not available");
 			throw new ProductNotFoundException("product not found");
+
 		} else {
+
 			logger.info("getting product based on pagenumber and pagesize");
 			return productPage.map(p -> {
 				ProductDto productDto = new ProductDto();
@@ -37,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
 				return productDto;
 			});
 		}
+
 
 	}
 }
