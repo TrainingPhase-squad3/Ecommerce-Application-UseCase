@@ -74,7 +74,7 @@ import com.alvas.ecommeerceapplication.response.PurchaseHistoryResponse;
 
 public class PaymentServiceImplTest {
 
-class PaymentServiceImplTest {
+
 
 
 	@Mock
