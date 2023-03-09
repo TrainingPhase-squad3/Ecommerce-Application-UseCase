@@ -112,70 +112,70 @@ public class PaymentServiceImplTest {
 	}
 
 	@Test
-	void testGetUserPurchasesForMonth_NoPurchaseHistoryFoundException() {
-
+	void testGetUserPurchasesForMonth() {
 		Long userId = 1L;
 		LocalDate monthDate = LocalDate.of(2023, 3, 1);
 		int pageNumber = 0;
 		int pageSize = 10;
 
-		Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
+		User user = new User();
+		user.setUserId(userId);
+
+		CartProduct cartProduct = new CartProduct();
+		cartProduct.setProductId(1L);
+		cartProduct.setQuantity(2);
+
+		Product product = new Product();
+		product.setProductId(1L);
+		product.setProductName("Bag");
+
+		Cart cart = new Cart();
+		cart.setTotalPrice(10.0);
+		cart.setCartProducts(Arrays.asList(cartProduct));
+
+		Payment payment = new Payment();
+		payment.setPaymentDate(LocalDate.now());
+		payment.setCart(cart);
+		payment.setWalletId(1L);
+
+		payment.setUser(user);
+
+		Wallet wallet = new Wallet();
+		wallet.setWalletId(1L);
+		wallet.setWalletType("credit");
+
+		Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 		Mockito.when(paymentRepository.findByUserUserIdAndPaymentDateBetween(userId, monthDate.withDayOfMonth(1),
 				monthDate.withDayOfMonth(monthDate.lengthOfMonth()),
 				PageRequest.of(pageNumber, pageSize, Sort.by("paymentDate").descending())))
-				.thenReturn(new PageImpl<>(Collections.emptyList()));
+				.thenReturn(new PageImpl<>(Collections.singletonList(payment)));
+		Mockito.when(walletRepository.findById(payment.getWalletId())).thenReturn(Optional.of(wallet));
+		Mockito.when(productRepository.findById(cartProduct.getProductId())).thenReturn(Optional.of(product));
 
-		Assertions.assertThrows(NoPurchaseHistoryFoundException.class, () -> {
-			paymentServiceImpl.getUserPurchasesForMonth(userId, monthDate, pageNumber, pageSize);
-		});
+		List<PurchaseHistoryResponse> result = paymentServiceImpl.getUserPurchasesForMonth(userId, monthDate,
+				pageNumber, pageSize);
+
+		Assertions.assertEquals(1, result.size());
+		PurchaseHistoryResponse purchaseHistoryResponse = result.get(0);
+		Assertions.assertEquals(LocalDate.now(), purchaseHistoryResponse.getPaymentDate());
+		Assertions.assertEquals(10.0, purchaseHistoryResponse.getTotalPrice());
+		Assertions.assertEquals(1L, purchaseHistoryResponse.getWalletId());
+		Assertions.assertEquals("credit", purchaseHistoryResponse.getWalletType());
+		List<CartProductResponse> cartProducts = purchaseHistoryResponse.getCartProduct();
+		Assertions.assertEquals(1, cartProducts.size());
+		CartProductResponse cartProductResponse = cartProducts.get(0);
+		Assertions.assertEquals(1L, cartProductResponse.getProductId());
+		Assertions.assertEquals(2, cartProductResponse.getQuantity());
+		Assertions.assertEquals("Bag", cartProductResponse.getProductName());
 	}
 
-	@Test
-	void testGetUserPurchasesForMonth() {
-	   
-	    Long userId = 1L;
-	    LocalDate monthDate = LocalDate.of(2023, 3, 1);
-	    int pageNumber = 0;
-	    int pageSize = 10;
-	    
-	    User user = new User();
-	    user.setUserId(userId);
-	    
-	    CartProduct cartProduct = new CartProduct();
-	    cartProduct.setProductId(1L);
-	    cartProduct.setQuantity(2);
-	    
-	    Cart cart = new Cart();
-	    cart.setTotalPrice(10.0);
-	    cart.setCartProducts(Arrays.asList(cartProduct));
-	    
-	    Payment payment = new Payment();
-	    payment.setPaymentDate(LocalDate.now());
-	    payment.setCart(cart);
-	    payment.setWalletId(1L);
-	    payment.setUser(user);
-	    
-	    Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-	    Mockito.when(paymentRepository.findByUserUserIdAndPaymentDateBetween(
-	        userId, monthDate.withDayOfMonth(1), monthDate.withDayOfMonth(monthDate.lengthOfMonth()), 
-	        PageRequest.of(pageNumber, pageSize, Sort.by("paymentDate").descending())
-	    )).thenReturn(new PageImpl<>(Collections.singletonList(payment)));
-	    
-	  
-	    List<PurchaseHistoryResponse> result = paymentServiceImpl.getUserPurchasesForMonth(userId, monthDate, pageNumber, pageSize);
-	    
-
-	    Assertions.assertEquals(1, result.size());
-
-
-
 	
 	
 	
 	
 
-}}
-
+}
+@Test
 	void testPaymentSuccess() {
 		Product product = new Product(1L, "Bat", 45, 665.45);
 		Product product2 = new Product(2L, "Basket ball", 50, 1000);
