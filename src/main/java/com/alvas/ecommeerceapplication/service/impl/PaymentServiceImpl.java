@@ -75,18 +75,20 @@ public class PaymentServiceImpl implements PaymentService {
 	UserRepository userRepository;
 	private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
+	
 	public List<PurchaseHistoryResponse> getUserPurchasesForMonth(Long userId, LocalDate monthDate, int pageNumber,
 			int pageSize) {
 
 		User users = userRepository.findById(userId)
-				.orElseThrow(() -> new UserIdNotFoundException("User not found with id: " + userId));
+				.orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
 		PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("paymentDate").descending());
 
 		Page<Payment> payments = paymentRepository.findByUserUserIdAndPaymentDateBetween(userId,
 				monthDate.withDayOfMonth(1), monthDate.withDayOfMonth(monthDate.lengthOfMonth()), pageRequest);
+
 		if (payments.isEmpty()) {
-			throw new NoPurchaseHistoryFoundException("No purchase history found for user " + userId + " in "
+			throw new NoPurchaseHistoryFoundException("No purchase history found for user " + users.getUserId() + " in "
 					+ monthDate.getMonth() + " " + monthDate.getYear());
 		}
 
@@ -98,12 +100,20 @@ public class PaymentServiceImpl implements PaymentService {
 			purchaseHistoryResponse.setTotalPrice(payment.getCart().getTotalPrice());
 			purchaseHistoryResponse.setWalletId(payment.getWalletId());
 
+			Wallet wallet = walletRepository.findById(payment.getWalletId()).orElseThrow(
+					() -> new WalletNotFoundException("Wallet not found with id: " + payment.getWalletId()));
+			String walletType = wallet.getWalletType();
+			purchaseHistoryResponse.setWalletType(walletType);
+
 			List<CartProductResponse> cartProducts = new ArrayList<>();
 			payment.getCart().getCartProducts().forEach(cartProduct -> {
 				CartProductResponse cartProductResponse = new CartProductResponse();
 				cartProductResponse.setProductId(cartProduct.getProductId());
 				cartProductResponse.setQuantity(cartProduct.getQuantity());
-				
+				String productName = productRepository.findById(cartProduct.getProductId()).orElseThrow(
+						() -> new ProductNotFoundException("Product not found with id: " + cartProduct.getProductId()))
+						.getProductName();
+				cartProductResponse.setProductName(productName);
 
 				cartProducts.add(cartProductResponse);
 			});
@@ -114,8 +124,7 @@ public class PaymentServiceImpl implements PaymentService {
 		});
 
 		return purchaseHistoryResponses;
-  }
-
+	}
 
 	@Override
 	@Transactional
