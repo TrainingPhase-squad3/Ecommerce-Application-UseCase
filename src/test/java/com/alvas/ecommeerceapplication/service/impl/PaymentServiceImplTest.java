@@ -373,6 +373,59 @@ public class PaymentServiceImplTest {
 		assertThrows(WalletExpiredException.class, () -> paymentServiceImpl.payment(12L, paymentDto));
 
 	}
+	@Test
+	void testInvalidUsersCart(){
+		Product product = new Product(1L, "Bat", 45, 665.45);
+		Product product2 = new Product(2L, "Basket ball", 50, 1000);
+
+		User user = new User(12L, "Manoj", "manu@gmail.com");
+		User user1=new User(1L,"Darshan","dar@gmail.com");
+		Wallet wallet = new Wallet(1L, user1, LocalDate.now().plusDays(5), 30000, "Paytm");
+
+		CartProduct cartProduct = new CartProduct(123L, 1L, 3);
+		CartProduct cartProduct2 = new CartProduct(234L, 2L, 5);
+
+		List<CartProduct> cartProducts = new ArrayList<>();
+		cartProducts.add(cartProduct);
+		cartProducts.add(cartProduct2);
+
+		Cart cart = new Cart(1L, 6996.35, 8, user1, cartProducts);
+		PaymentDto paymentDto = new PaymentDto(1L, 1L);
+		Mockito.when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
+		Mockito.when(cartRepository.findById(cart.getCartId())).thenReturn(Optional.of(cart));
+		Mockito.when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
+		assertThrows(CartNotFoundException.class, () -> paymentServiceImpl.payment(user.getUserId(), paymentDto));
+		
+		
+	}
+	
+	@Test
+	void testInvalidUsersWallet() {
+		Product product = new Product(1L, "Bat", 45, 665.45);
+		Product product2 = new Product(2L, "Basket ball", 50, 1000);
+
+		User user = new User(12L, "Manoj", "manu@gmail.com");
+		User user1=new User(1L,"Darshan","dar@gmail.com");
+		Wallet wallet = new Wallet(1L, user1, LocalDate.now().plusDays(5), 30000, "Paytm");
+
+		CartProduct cartProduct = new CartProduct(123L, 1L, 3);
+		CartProduct cartProduct2 = new CartProduct(234L, 2L, 5);
+
+		List<CartProduct> cartProducts = new ArrayList<>();
+		cartProducts.add(cartProduct);
+		cartProducts.add(cartProduct2);
+
+		Cart cart = new Cart(1L, 6996.35, 8, user1, cartProducts);
+		PaymentDto paymentDto = new PaymentDto(1L, 1L);
+		Mockito.when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
+		Mockito.when(cartRepository.findById(cart.getCartId())).thenReturn(Optional.of(cart));
+		Mockito.when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
+		Mockito.when(cartRepository.findByCartIdAndUserUserId(cart.getCartId(), user.getUserId())).thenReturn(cart);
+		
+		assertThrows(WalletNotFoundException.class, () -> paymentServiceImpl.payment(user.getUserId(), paymentDto));
+		
+		
+	}
 }
 
 
