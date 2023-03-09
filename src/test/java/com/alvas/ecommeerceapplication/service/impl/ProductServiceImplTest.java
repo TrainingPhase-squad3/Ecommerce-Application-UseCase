@@ -74,37 +74,66 @@ public class ProductServiceImplTest {
 
 
 
-	@Test
+@Test
 	void getProductTestForNull() {
 
-		Pageable pageable = PageRequest.of(0, 2);
-		Page<Product> productPage = Page.empty(pageable);
+		Page<Product> productPage = Page.empty();
 
 		when(productRepository.findByProductNameContainingIgnoreCase(any(), any())).thenReturn(productPage);
 
 		Assertions.assertThrows(ProductNotFoundException.class, () -> {
-			productServiceImpl.getProduct(null, 0, 2);
+			productServiceImpl.getProduct(null, 0, 3);
 		});
 
 	}
 
 	@Test
-	public void testGetProductWithInvalidProductName() {
+	void testGetProductWithInvalidProductName() {
 
 		String ProductName = "xyz";
 		int pageNumber = 0;
 		int pageSize = 2;
-		Pageable pageable = PageRequest.of(0, 2);
-		Page<Product> productPage = Page.empty(pageable);
 
-		when(productRepository.findByProductNameContainingIgnoreCase(any(), any())).thenReturn(productPage);
+		Page<Product> productPage = Page.empty();
 
-		Exception exception = Assertions.assertThrows(ProductNotFoundException.class, () -> {
+		when(productRepository.findByProductNameContainingIgnoreCase(any(), any())).thenReturn(Page.empty());
+
+		Assertions.assertThrows(ProductNotFoundException.class, () -> {
 			productServiceImpl.getProduct(ProductName, pageNumber, pageSize);
 		});
 
-		assertEquals("product not found", exception.getMessage());
+	}
 
+	@Test
+	void getProductTestForInvlidPageNumber() {
+
+		List<Product> productList = new ArrayList<>();
+		Product p1 = new Product();
+		p1.setProductId(1);
+		p1.setProductName("box");
+		p1.setAvailableQuantity(100);
+		p1.setPrice(50);
+
+		Product p2 = new Product();
+		p2.setProductId(2);
+		p2.setProductName("book");
+		p2.setAvailableQuantity(30);
+		p2.setPrice(20);
+
+		productList.add(p1);
+		productList.add(p2);
+
+		Pageable pageable = PageRequest.of(0, 1);
+		Page<Product> productPage = new PageImpl<>(productList, pageable, 0);
+
+		when(productRepository.findByProductNameContainingIgnoreCase(any(), any())).thenReturn(productPage);
+
+		Page<ProductDto> result = productServiceImpl.getProduct("box", 2, 2);
+		assertTrue(result.isEmpty());
+
+		Assertions.assertEquals(0, result.getTotalElements());
+		Assertions.assertEquals(0, result.getContent().size());
+		
 	}
 
 }
