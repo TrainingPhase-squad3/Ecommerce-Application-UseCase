@@ -88,8 +88,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(RequestedQuantityNotAvailableException.class)
 	public ResponseEntity<ApiResponse> handleRequestedQuantityNotAvailableException(RequestedQuantityNotAvailableException exception) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ApiResponse(exception.getMessage(), HttpStatus.BAD_REQUEST));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
 
 
 	}
