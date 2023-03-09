@@ -129,6 +129,15 @@ public class PaymentServiceImpl implements PaymentService {
 		logger.warn("throws exception when wallet for a user not found");
 		Wallet wallet = walletRepository.findById(paymentDto.getWalletId()).orElseThrow(
 				() -> new WalletNotFoundException("wallet with walletId:" + paymentDto.getWalletId() + " not found"));
+		
+		Cart cart1=cartRepository.findByCartIdAndUserUserId(paymentDto.getCartId(), userId);
+		if(cart1==null) {
+			throw new CartNotFoundException("Cart:"+paymentDto.getCartId()+" not for the user:"+userId);
+		}
+		Wallet wallet1=walletRepository.findByWalletIdAndUserUserId(paymentDto.getWalletId(), userId);
+		if(wallet1==null) {
+			throw new WalletNotFoundException("wallet not belongs to  the user:"+userId);
+		}
 
 		List<Long> productIds = cart.getCartProducts().stream().map(CartProduct::getProductId)
 				.collect(Collectors.toList());
