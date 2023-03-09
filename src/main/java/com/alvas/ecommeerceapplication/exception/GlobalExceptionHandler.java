@@ -31,9 +31,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	
-	@ExceptionHandler(UserIdNotFoundException.class)
+@ExceptionHandler(UserIdNotFoundException.class)
 	public ResponseEntity<ApiResponse> handleResourceNotFoundException(
 			UserIdNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
+
+	}
+
+	@ExceptionHandler(NoPurchaseHistoryFoundException.class)
+	public ResponseEntity<ApiResponse> handleResourceNotFoundException(
+			NoPurchaseHistoryFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(exception.getMessage(), HttpStatus.NOT_FOUND));
+
+	}
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ApiResponse> handleUserNotFoundException(UserNotFoundException exception) {
@@ -44,9 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 
-	@ExceptionHandler(NoPurchaseHistoryFoundException.class)
-	public ResponseEntity<ApiResponse> handleResourceNotFoundException(
-			NoPurchaseHistoryFoundException exception) {
+	
 
 	@ExceptionHandler(CartNotFoundException.class)
 	public ResponseEntity<ApiResponse> handleCartNotFoundException(CartNotFoundException exception) {
